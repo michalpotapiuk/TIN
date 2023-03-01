@@ -1,0 +1,88 @@
+<%-  include('../../fragments/header.ejs') %>
+<script type="application/javascript" src="./public/JS/validateUser.js"></script>
+<script type="application/javascript" src="./public/JS/validationCommon.js"></script>
+    <main>
+        <h2><%=pageTitle %></h2>
+         <form class="form" method="post" action="<%=formAction%>" novalidate onsubmit="return validateForm();">
+             <input type="hidden" name="_id" value="<%= user._id%>">
+
+            <label for="firstName">Imię: <span class="symbol-required">*</span></label>
+            <input type="text" name="firstName" id="firstName" placeholder="2-60 znaków" value="<%= user.firstName%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorFirstName" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('firstName'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('firstName')).message%>
+                <%}%>
+            </span>
+
+            <label for="lastName">Nazwisko: <span class="symbol-required">*</span></label>
+            <input type="text" name = "lastName" id="lastName" placeholder="2-60 znaków"value="<%= user.lastName%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorLastName" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('lastName'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('lastName')).message%>
+                <%}%>
+            </span>
+
+            <label for="email">Email: <span class="symbol-required">*</span></label>
+            <input type="email" name = "email" id="email" placeholder="np. janek@gmail.com" value="<%= user.email%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorEmail" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('email'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('email')).message%>
+                <%}%>
+            </span>
+
+            <label for="address">Adres: <span class="symbol-required">*</span></label>
+            <input type="text" name = "address" id="adres" placeholder="2-60 znaków" value="<%= user.address%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorAdres" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('address'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('address')).message%>
+                <%}%>
+            </span>
+
+            <label for="number">Numer telefonu: <span class="symbol-required">*</span></label>
+            <input type="text" name = "number" id="phone" placeholder="9 znaków" value="<%= user.number%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorPhone" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('number'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('number')).message%>
+                <%}%>
+            </span>
+
+             <div class="form-buttons">
+                 <p id="errorsSummary"></p>
+                 <% if (formMode != 'showDetails') { %>
+                 <input type="submit" value="<%=btnLabel%>" class="form-button-submit"/>
+                 <a href="/user" class="form-button-cancel">Anuluj</a>
+                 <% } else { %>
+                     <a href="/user" class="form-button-cancel">Powrót</a>
+                 <% } %>
+             </div>
+         </form>
+        <% if (formMode == 'showDetails' || formMode == 'edit') {%>
+            <h2>Szczegóły zamówienia</h2>
+            <table  class="table-list">
+                <thead>
+                <tr>
+                    <th>Książka</th>
+                    <th>Cena</th>
+                    <th>Data złożenia zamówienia</th>
+                    <th>Data wysyłki</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% for (let o of user.orders) {%>
+                    <tr>
+                        <td><a href="/orders/details/<%= o.book._id%>"><%= o.book.title%></a></td>
+                        <td><%= o.book.price%></td>
+                        <td><%= o.dateOrder.toISOString().split('T')[0] %></td>
+                        <td><%= o.dataShipping? o.order.dataShipping.toISOString().split('T')[0] : '' %></td>
+                    </tr>
+                <% }%>
+                </tbody>
+            </table>
+        <% }%>
+    </main>
+<%-  include('../../fragments/footer.ejs') %>

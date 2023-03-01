@@ -1,0 +1,86 @@
+<%-  include('../../fragments/header.ejs') %>
+    <main>
+        <h2><%=pageTitle %></h2>
+        <form class="form" method="post" action="<%=formAction%>" novalidate>
+            <input type="hidden" name="_id" value="<%= book._id%>">
+
+
+            <label for="title">Tytuł: <span class="symbol-required">*</span></label>
+            <input type="text" name="title" id="tytul" value="<%= book.title%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorTytul" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('title'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('title')).message%>
+                <%}%>
+            </span>
+
+            <label for="price">Cena(PLN): <span class="symbol-required">*</span></label>
+            <input type="number" name = "price" id="cena" value="<%= book.price%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorCena" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('price'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('price')).message%>
+                <%}%>
+            </span>
+
+            <label for="publisher">Wydawnictwo:</label>
+            <input type="text" name = "publisher" id="wydawnictwo" value="<%= book.publisher%>"
+                    <%= (formMode == 'showDetails') ? 'disabled' : ''%>/>
+            <span id="errorWydawnictwo" class="errors-text" >
+                <% if (validationErrors.find(e => e.path.includes('publisher'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('publisher')).message%>
+                <%}%>
+            </span>
+
+            <label for="authorId">Autor:</label>
+            <select name="authorId" id="ksiazka" required <%= (formMode == 'showDetails') ? 'disabled' : '' %>>
+                <option>---Wybierz autora---</option>
+                <% for (let i=0; i< allAuthors.length; i++) { let author = allAuthors[i]; %>
+                <option value="<%= author._id %>" label="<%= author.firstName + ' ' + author.lastName %>"
+                        <%= (book._id && author._id.toString() == book.authorId.toString()) ? 'selected' : ''%>></option>
+                <% } %>
+            </select>
+            <span id="errorAutor" class="errors-text">
+                <% if (validationErrors.find(e => e.path.includes('authorId'))) { %>
+                    <%=validationErrors.find(e => e.path.includes('authorId')).message%>
+                <%}%>
+            </span>
+
+            <% if (formMode==='showDetails') {%>
+            <div class="form-buttons"></div>
+            <%}%>
+            <div class="form-buttons">
+                <p id="errorsSummary" class="error-text"></p>
+                <% if (formMode !== 'showDetails') {%>
+                <input type="submit" class="form-button-submit"  value="<%=btnLabel%>">
+                <a href="/user"  class="form-button-cancel">Anuluj</a>
+                <%}else {%>
+                    <a href="/user"  class="form-button-cancel">Powrót</a>
+                <%}%>
+            </div>
+        </form>
+        <% if (formMode == 'showDetails' || formMode == 'edit') {%>
+            <h2>Szczegóły zamówienia</h2>
+            <table  class="table-list">
+                <thead>
+                <tr>
+                    <th>Tytuł</th>
+                    <th>Autor</th>
+                    <th>Wydawnictwo</th>
+                    <th>Cena</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% for (let o of books) { %>
+                    <tr>
+                        <td><a href="/orders/details/<%= o._id%>"><%= o.title%></a></td>
+                        <td><%=o.author.firstName.concat(' ', o.author.lastName)%></td>
+                        <td><%=o.publisher%></td>
+                        <td><%=o.price%></td>
+                    </tr>
+                <% }%>
+                </tbody>
+            </table>
+        <% }%>
+    </main>
+<%-  include('../../fragments/footer.ejs') %>
